@@ -14,6 +14,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use LWP::Simple;
+use XML::Simple;
 use CGI;
 
 use constant {
@@ -26,6 +27,23 @@ use constant {
 	MIN_PORT_NO => 0,
 	MAX_PORT_NO => DYNAMIC_PRIVATE_PORTS,
 };
+
+my $url = "http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml";
+
+#for Debug::start
+my $contents = LWP::Simple::get($url);
+my $xml = XML::Simple::XMLin($contents);
+exists($xml->{record}) or die "can't get xml file www.iana.org";
+print "*********************************************************************************************\n";
+print "* $url\n";
+print "* updated: $xml->{updated}\n";
+print "* title: $xml->{title}\n";
+print "* id: $xml->{id}\n";
+print "*********************************************************************************************\n";
+$xml = $xml->{record};
+#print Dumper($xml);
+exit(0);
+#for Debug::end
 
 my $form=new CGI();
 print $form->header(-charset=>'UTF-8');	# HTML Header
@@ -53,10 +71,10 @@ print $form->end_html;	# End of HTML
 exit(0);
 
 
+
 #検索結果
 sub result_table{
 	my ($type, $value)=($_[0], $_[1]);
-	my $url = "http://www.iana.org/assignments/port-numbers";
 	my @detail=split(/\n/, LWP::Simple::get($url));
 	#テーブル出力（ヘッダ）
 	print << "DISP_TABLE_HEADER";
