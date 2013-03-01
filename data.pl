@@ -30,7 +30,8 @@ sub get_json
 			push(@arr, $d)
 		}
 	}
-	$json = to_json(\@arr);	
+	$json = to_json({'updated'=>$data->{updated}, 'records'=>\@arr});
+	print $json;
 	return($json);
 }
 
@@ -74,9 +75,7 @@ if($last_modified ne $memd->get('Last-Modified')){
 	my $xml = new XML::Simple;
 	my $xdata = $xml->XMLin($res->content);
 
-	$data{title} = $xdata->{title};
 	$data{updated} = $xdata->{updated};
-	$data{num} = scalar(@{$xdata->{record}});
 	$data{records} = ();
 
 	# 枝刈り、memcacheへの保存

@@ -13,10 +13,11 @@ jQuery(function($){
 			{"keyword":value},
 			function(data, status) {
 				$('table#item_table tbody *').remove();	//全て削除
-				for(var i=0; i<data.length; i++){
-					var tr = data[i].join('</td><td>');
+				for(var i=0; i<data.records.length; i++){
+					var tr = data.records[i].join('</td><td>');
 					$('table#item_table tbody').append("<tr><td>"+tr+"</td></tr>");
 				}
+				$('#updated').text('Last modified: '+data.updated);
 			},
 			"json"
 		);
