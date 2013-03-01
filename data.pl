@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #****************************************************************************************************************
 #*** http://ja.wikipedia.org/wiki/%E3%83%9D%E3%83%BC%E3%83%88%E7%95%AA%E5%8F%B7
@@ -23,30 +23,51 @@ sub get_json
 {
 	my $data = shift;
 	my $keyword = shift;
+	my $type = shift;
+
 	my $json = '';
-	my @arr = ();
+	my @found = ();
 	foreach my $d (@{$data->{records}}){
-		if($d->[0] =~ /$keyword/){
-			push(@arr, $d)
+		if($type eq 'by_name'){
+			# search by name
+			if($d->[0] =~ /$keyword/){
+				push(@found, $d)
+			}
+		}elsif($type eq 'by_no'){
+			# search by no
+			my $no = $d->[1];
+			if($no ne '(N/A)'){
+				$no =~ s/\s//g;
+				if($no =~ /^(\d+)$/){
+					# 単一数値
+					if($1 == $keyword) { push(@found, $d); }
+				}elsif($no =~ /^(\d+)-(\d+)$/){
+					# 数値範囲
+					if($1 <= $keyword && $keyword <= $2) { push(@found, $d); }
+				}
+			}
 		}
 	}
-	$json = to_json({'updated'=>$data->{updated}, 'records'=>\@arr});
+	$json = to_json({'updated'=>$data->{updated}, 'records'=>\@found});
 	print $json;
 	return($json);
 }
 
-# get keyword
+# main
 my $q = new CGI;
 my $keyword = '';
+my $type = 'by_name';
 foreach my $name ($q->param) {
 	if($name eq 'keyword'){
 		$keyword = $q->param($name);
+	}elsif($name eq 'ktype'){
+		$type = $q->param($name);
 	}
 }
 if($keyword eq ''){
 	$keyword = shift;   # for Debug
+	$type = shift;   # for Debug
 }
-
 
 my $url = "http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml";
 my $memd = Cache::Memcached::Fast->new({
@@ -99,18 +120,18 @@ if($last_modified ne $memd->get('Last-Modified')){
 	$memd->set('data', \%data);
 
 	# get_json: search...	
-	$json = get_json(\%data, $keyword);
+	$json = get_json(\%data, $keyword, $type);
 }else{
 	# check keyword
-	$json = $memd->get('keyword:'.$keyword);
+	$json = $memd->get("keyword:$type-$keyword");
 
 	if(!$json){
 		# search keyword 
 		%data = %{$memd->get('data')};
 		# get_json: search...
-		$json = get_json(\%data, $keyword);
+		$json = get_json(\%data, $keyword, $type);
 		# save keyword
-        $memd->set('keyword:'.$keyword, $json);
+        $memd->set("keyword:$type-$keyword", $json);
 	}
 }
 

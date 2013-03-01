@@ -7,10 +7,11 @@ jQuery(function($){
 
 	//検索
 	function search(){
-		var value = $('#keyword').val();
+		var keyword = $('#keyword').val();
+		var type = $('input[name="ktype"]:checked').val();
 		$.post(
 			"/portnumbers/data.pl", 
-			{"keyword":value},
+			{"keyword":keyword, "ktype":type},
 			function(data, status) {
 				$('table#item_table tbody *').remove();	//全て削除
 				for(var i=0; i<data.records.length; i++){
