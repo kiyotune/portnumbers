@@ -17,7 +17,6 @@ use XML::Simple;
 use Cache::Memcached::Fast;
 use CGI;
 use JSON;
-use Data::Dumper;
 
 # subroutine: get_json
 sub get_json
@@ -74,7 +73,6 @@ if($last_modified ne $memd->get('Last-Modified')){
 	my $res = $ua->get($url);
 	my $xml = new XML::Simple;
 	my $xdata = $xml->XMLin($res->content);
-	#my $xdata = $xml->XMLin('./data.xml');	# for Debug
 
 	$data{title} = $xdata->{title};
 	$data{updated} = $xdata->{updated};
@@ -108,7 +106,7 @@ if($last_modified ne $memd->get('Last-Modified')){
 	$json = $memd->get('keyword:'.$keyword);
 
 	if(!$json){
-		# read keyword 
+		# search keyword 
 		%data = %{$memd->get('data')};
 		# get_json: search...
 		$json = get_json(\%data, $keyword);
