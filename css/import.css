@@ -1,0 +1,27 @@
+@charset "utf-8";
+
+/*-----------------------------------------------------------
+
+ import.css
+ norimania@gmail.com
+ 
+ Import css files including //
+
+ - share/default.css
+ - share/fonts.css - YUI fonts.css
+ - share/layout.css
+ - share/common.css
+
+ and more module setting files.
+ Page's own styles will be defined below example.
+ 
+ "body.className element"
+
+ ------------------------------------------------------------*/
+
+/* Common styles
+ ------------------------------------------------------------*/
+
+@import url("share/default.css");
+@import url("share/fonts.css");
+@import url("share/common.css");

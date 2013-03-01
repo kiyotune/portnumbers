@@ -1,0 +1,90 @@
+@charset "utf-8";
+
+/*-----------------------------------------------------------
+
+ common.css
+ norimania@gmail.com
+ 
+ Define common styles in this file.
+ Using the YUI fonts.css,
+ font-size properties will be defined below table.
+ 
+ |px|%|
+ |10|77|
+ |11|85|
+ |12|93| (was 93)
+ |13|100|
+ |14|108| (was 107)
+ |15|116| (was 114)
+ |16|123.1| (was 122)
+ |17|131| (was 129)
+ |18|138.5| (was 136)
+ |19|146.5| (was 144)
+ |20|153.9| (was 152)
+ |21|161.6| (was 159)
+ |22|167|
+ |23|174|
+ |24|182|
+ |25|189|
+ |26|197|
+ 
+ ex) 12px
+ 
+ element {
+ 	font-size: 93%;
+ }
+	
+ ------------------------------------------------------------*/
+
+/*-----------------------------------------------------------
+ Common Settings
+ ------------------------------------------------------------*/
+ 
+body {
+	line-height: 1.5;
+}
+
+a {
+	color: #e21412;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+h1 {
+	padding: 15px 0 0 22px;
+	font-size: 100%
+}
+
+p {
+	margin: 15px 0 0 22px;
+}
+		
+input {
+	border: inset #666 1px;
+	padding: .2em;
+}
+
+table {
+	margin: 15px 0 0 22px;
+	border: solid #ccc 1px;
+	border-right: none;
+	border-bottom: none;
+}
+
+	table td {
+		border: solid #ccc 1px;
+		border-top: none;
+		border-left: none;
+		padding: .3em .5em;
+	}
+
+	table thead {
+		background: #eee;
+	}
+	
+	table tbody {
+	}
