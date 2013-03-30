@@ -14,11 +14,14 @@ jQuery(function($){
 			{"keyword":keyword, "ktype":type},
 			function(data, status) {
 				$('table#item_table tbody *').remove();	//全て削除
+				$('#updated').empty();
 				for(var i=0; i<data.records.length; i++){
 					var tr = data.records[i].join('</td><td>');
 					$('table#item_table tbody').append("<tr><td>"+tr+"</td></tr>");
 				}
-				$('#updated').text('Last modified: '+data.updated);
+				$("#updated").append(
+					$("<a></a>").attr("href", data.url).text('Last modified: '+data.updated)
+				);
 			},
 			"json"
 		);

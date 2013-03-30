@@ -17,6 +17,7 @@ use XML::Simple;
 use Cache::Memcached::Fast;
 use CGI;
 use JSON;
+use constant URL=>'http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml';
 
 # subroutine: get_json
 sub get_json
@@ -33,7 +34,7 @@ sub get_json
 			if($d->[0] =~ /$keyword/){
 				push(@found, $d)
 			}
-		}elsif($type eq 'by_no'){
+		}elsif($type eq 'by_no' && $keyword=~/^\d+$/){
 			# search by no
 			my $no = $d->[1];
 			if($no ne '(N/A)'){
@@ -48,7 +49,7 @@ sub get_json
 			}
 		}
 	}
-	$json = to_json({'updated'=>$data->{updated}, 'records'=>\@found});
+	$json = to_json({'updated'=>$data->{updated}, 'url'=>URL, 'records'=>\@found});
 	print $json;
 	return($json);
 }
@@ -69,7 +70,6 @@ if($keyword eq ''){
 	$type = shift;   # for Debug
 }
 
-my $url = "http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml";
 my $memd = Cache::Memcached::Fast->new({
 	servers => [ { address => 'localhost:11211' }],
 	namespace => 'portnumbers:',
@@ -80,7 +80,7 @@ my $memd = Cache::Memcached::Fast->new({
 # check modified-date
 my $ua = new LWP::UserAgent;
    $ua->agent("LWP::GETHEAD");
-my $rq = new HTTP::Request(HEAD => $url);
+my $rq = new HTTP::Request(HEAD => URL);
 my $rp = $ua->request($rq);
 my $last_modified = $rp->header('Last-Modified');
 my %data = ();	# すべてのデータ
@@ -92,7 +92,7 @@ if($last_modified ne $memd->get('Last-Modified')){
 	
 	$memd->set('Last-Modified', $last_modified);
 
-	my $res = $ua->get($url);
+	my $res = $ua->get(URL);
 	my $xml = new XML::Simple;
 	my $xdata = $xml->XMLin($res->content);
 
